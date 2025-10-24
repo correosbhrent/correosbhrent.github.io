@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registration Form</title>
+  <style>
+    :root{--accent:#375aeb;--bg:#f6f8fb;--card:#ffffff;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;padding:28px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{width:100%;max-width:760px;background:var(--card);border-radius:12px;box-shadow:0 6px 20px rgba(30,41,59,0.08);padding:28px}
+    h1{margin:0 0 6px;font-size:20px}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#111827}
+    input[type=text],input[type=email],input[type=password],input[type=tel],select,textarea,input[type=date]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;background:#fff}
+    textarea{min-height:74px;resize:vertical}
+    .full{grid-column:1/-1}
+    .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-top:16px}
+    button{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    button[disabled]{opacity:0.6;cursor:not-allowed}
+    .muted{color:var(--muted);font-size:13px}
+    .helper{font-size:12px;color:#9ca3af;margin-top:6px}
+    .error{color:#b91c1c;font-size:13px;margin-top:6px}
+    .small{font-size:13px}
+    .inline{display:flex;gap:10px;align-items:center}
+    .password-row{display:flex;gap:8px}
+    .toggle{border:1px solid #e6e9ef;background:#fff;padding:8px;border-radius:8px;cursor:pointer}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}.actions{flex-direction:column-reverse;align-items:stretch}}
+  </style>
+</head>
+<body>
+  <form id="regForm" class="card" novalidate>
+    <h1>Create an account</h1>
+    <p class="lead">Please fill in the details below. Fields marked with * are required.</p>
+
+    <div class="grid">
+      <div>
+        <label for="firstName">First name *</label>
+        <input id="firstName" name="firstName" type="text" required placeholder="Jane" />
+        <div class="error" id="err-firstName" aria-live="polite"></div>
+      </div>
+
+      <div>
+        <label for="lastName">Last name *</label>
+        <input id="lastName" name="lastName" type="text" required placeholder="Doe" />
+        <div class="error" id="err-lastName"></div>
+      </div>
+
+      <div>
+        <label for="email">Email *</label>
+        <input id="email" name="email" type="email" required placeholder="you@example.com" />
+        <div class="error" id="err-email"></div>
+      </div>
+
+      <div>
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel" placeholder="+63 912 345 6789" />
+        <div class="helper">Optional — include country code if outside your country.</div>
+      </div>
+
+      <div>
+        <label for="password">Password *</label>
+        <div class="password-row">
+          <input id="password" name="password" type="password" required placeholder="At least 8 characters" />
+          <button type="button" class="toggle" id="togglePwd" aria-pressed="false">Show</button>
+        </div>
+        <div class="error" id="err-password"></div>
+        <div class="helper">Use 8+ characters with letters and numbers.</div>
+      </div>
+
+      <div>
+        <label for="confirm">Confirm password *</label>
+        <input id="confirm" name="confirm" type="password" required placeholder="Re-type password" />
+        <div class="error" id="err-confirm"></div>
+      </div>
+
+      <div>
+        <label for="dob">Date of birth</label>
+        <input id="dob" name="dob" type="date" />
+      </div>
+
+      <div>
+        <label>Gender</label>
+        <div class="inline">
+          <label class="small"><input type="radio" name="gender" value="female" /> Female</label>
+          <label class="small"><input type="radio" name="gender" value="male" /> Male</label>
+          <label class="small"><input type="radio" name="gender" value="other" /> Other</label>
+        </div>
+      </div>
+
+      <div class="full">
+        <label for="address">Address</label>
+        <textarea id="address" name="address" placeholder="Street, City, Postal Code"></textarea>
+      </div>
+
+      <div>
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">Select country</option>
+          <option>Philippines</option>
+          <option>United States</option>
+          <option>Canada</option>
+          <option>United Kingdom</option>
+          <option>Australia</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="role">Account type</label>
+        <select id="role" name="role">
+          <option value="user">User</option>
+          <option value="seller">Seller</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label class="inline"><input id="terms" name="terms" type="checkbox" required /> <span class="small">I agree to the <a href="#">terms and conditions</a> *</span></label>
+        <div class="error" id="err-terms"></div>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <div class="muted">Already have an account? <a href="#">Sign in</a></div>
+      <button id="submitBtn" type="submit">Register</button>
+    </div>
+  </form>
+
+  <script>
+    const form = document.getElementById('regForm');
+    const toggle = document.getElementById('togglePwd');
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirm');
+
+    toggle.addEventListener('click', () => {
+      const show = password.type === 'password';
+      password.type = show ? 'text' : 'password';
+      confirm.type = show ? 'text' : 'password';
+      toggle.textContent = show ? 'Hide' : 'Show';
+      toggle.setAttribute('aria-pressed', String(show));
+    });
+
+    function setError(id, message){
+      document.getElementById('err-' + id).textContent = message || '';
+    }
+
+    function isEmailValid(email){
+      // simple email regex (sufficient for client-side check)
+      return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let ok = true;
+
+      // clear errors
+      ['firstName','lastName','email','password','confirm','terms'].forEach(k=>setError(k,''));
+
+      if(!form.firstName.value.trim()){ setError('firstName','First name is required'); ok=false }
+      if(!form.lastName.value.trim()){ setError('lastName','Last name is required'); ok=false }
+      if(!form.email.value.trim()){ setError('email','Email is required'); ok=false }
+      else if(!isEmailValid(form.email.value.trim())){ setError('email','Enter a valid email address'); ok=false }
+
+      const pwd = form.password.value;
+      if(!pwd){ setError('password','Password is required'); ok=false }
+      else if(pwd.length < 8){ setError('password','Password must be at least 8 characters'); ok=false }
+
+      if(form.confirm.value !== pwd){ setError('confirm','Passwords do not match'); ok=false }
+
+      if(!form.terms.checked){ setError('terms','You must accept the terms'); ok=false }
+
+      if(!ok) return;
+
+      // Gather data (example only — do NOT send passwords over GET)
+      const data = new FormData(form);
+      const payload = {};
+      data.forEach((v,k)=>payload[k]=v);
+
+      // here you would POST the payload to your server (example commented)
+      // fetch('/api/register', {method:'POST', body: JSON.stringify(payload), headers:{'Content-Type':'application/json'}})
+      //  .then(r=>r.json()).then(res=>console.log(res)).catch(err=>console.error(err));
+
+      // For demo: show success and reset
+      alert('Registration successful — (demo). Check console for submitted payload.');
+      console.log('Submitted payload', payload);
+      form.reset();
+      toggle.textContent = 'Show';
+      password.type = 'password';
+      confirm.type = 'password';
+    });
+  </script>
+</body>
+</html>
